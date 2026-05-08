@@ -18,22 +18,22 @@
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ─── Scene: extra padding so the wider glow isn't clipped ─── */
+    /* ─── Scene: generous padding so wide glow isn't clipped ─── */
     .scene {
       position: relative;
       max-width: 620px;
       width: 100%;
-      padding: 40px;
+      padding: 56px;
     }
 
     /* ─── Outer glow: two layers for depth ─── */
 
-    /* Layer 1 — tight, vivid halo right at card edge */
+    /* Layer 1 — tight vivid halo right at card edge */
     .outer-glow {
       position: absolute;
-      inset: 40px;
+      inset: 56px;           /* aligns with card */
       border-radius: 22px;
-      overflow: hidden;
+      overflow: hidden;      /* clips only the crisp halo layer */
       pointer-events: none;
       z-index: 0;
     }
@@ -56,29 +56,38 @@
       );
       animation: spin 5s linear infinite;
       filter: blur(14px);
-      opacity: 0.85;
+      opacity: 0.9;
     }
 
-    /* Layer 2 — wide ambient spread for the soft bleed */
-    .outer-glow::after {
+    /* Layer 2 — wide ambient bleed, NOT clipped (lives outside outer-glow) */
+    .ambient-glow {
+      position: absolute;
+      inset: 56px;
+      border-radius: 22px;
+      pointer-events: none;
+      overflow: visible;
+      z-index: 0;
+    }
+
+    .ambient-glow::before {
       content: "";
       position: absolute;
       inset: -150%;
       background: conic-gradient(
         from 0deg,
         rgba(139,92,246,0)      0deg,
-        rgba(139,92,246,0.7)   50deg,
-        rgba(244,114,182,0.4)  90deg,
+        rgba(139,92,246,0.85)  50deg,
+        rgba(244,114,182,0.5)  90deg,
         rgba(244,114,182,0)   145deg,
         rgba(244,114,182,0)   205deg,
-        rgba(244,114,182,0.7) 250deg,
-        rgba(139,92,246,0.4)  295deg,
+        rgba(244,114,182,0.85)250deg,
+        rgba(139,92,246,0.5)  295deg,
         rgba(139,92,246,0)    340deg,
         rgba(139,92,246,0)    360deg
       );
       animation: spin 5s linear infinite;
-      filter: blur(40px);
-      opacity: 0.7;
+      filter: blur(55px);
+      opacity: 0.75;
     }
 
     /* ─── Card frame: clip overflow so gradient shows only as border ─── */
@@ -129,7 +138,7 @@
     }
     .title-icon { font-size: 22px; color: #4f6ef7; }
     .title-text { font-size: 22px; font-weight: 700; color: #4f6ef7; }
-    .title-text span { color: #4f6ef7; }
+    .title-text span { color: #c0392b; }
     .subtitle {
       font-size: 14.5px;
       color: #555;
@@ -180,8 +189,10 @@
 </head>
 <body>
   <div class="scene">
-    <!-- outer soft glow (not clipped, bleeds outside card) -->
+    <!-- tight halo at card edge -->
     <div class="outer-glow"></div>
+    <!-- wide ambient bleed, not clipped -->
+    <div class="ambient-glow"></div>
 
     <!-- card with rotating gradient border -->
     <div class="card-frame">
