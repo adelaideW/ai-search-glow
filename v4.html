@@ -71,13 +71,17 @@
       animation: spin 4s linear infinite;
     }
 
-    /* Card frame — crisp 2px rainbow border ring */
+    /* Card frame — 5px rainbow border ring with soft outer bleed */
     .card-frame {
       position: relative;
       z-index: 1;
       border-radius: 22px;
       padding: 5px;
       overflow: hidden;
+      box-shadow:
+        0 0 12px 4px rgba(139, 92,246,0.35),
+        0 0 20px 6px rgba( 59,130,246,0.20),
+        0 0 12px 4px rgba(239, 68, 68,0.25);
     }
 
     .card-frame::before {
