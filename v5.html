@@ -28,22 +28,21 @@
     /*
       Two-layer glow approach to fix overflow:hidden + filter clash:
 
-      .outer-glow   — filter: blur(8px). “Spread” ≈4px vs the old 8px inset frame by using
-        inset:4px (larger footprint) and matching border-radius:27px (~+4 vs 23px halo clip).
-        No overflow here so blur can bleed outward.
+      .outer-glow — Tighter halo: inset 8px, radius 23px, blur 6px, opacity 0.4 (lighter /
+        thinner read than wider 4px / 27px footprint at 8px blur + full-contrast arc).
 
-      .glow-clip   — overflow:hidden clips the raw conic; ::before is the rotating arc (~180°).
+      .glow-clip — overflow:hidden clips the raw conic; ::before is the rotating arc (~180°).
 
-      vs v4: same halo opacity (0.6), boundaryless card, wide arc tuned for input strip sweep.
+      Boundaryless card; arc stops capped ~0.85 pre-blur to keep the halo wispy.
     */
     .outer-glow {
       position: absolute;
-      inset: 4px;
-      border-radius: 27px;
+      inset: 8px;
+      border-radius: 23px;
       pointer-events: none;
       z-index: 0;
-      filter: blur(8px);
-      opacity: 0.6;
+      filter: blur(6px);
+      opacity: 0.4;
     }
 
     .glow-clip {
@@ -62,13 +61,13 @@
         from 0deg,
         rgba(139, 92,246,0)   0deg,
         rgba(139, 92,246,0)  82deg,
-        rgba(139, 92,246,1)  92deg,
-        rgba( 59,130,246,1) 118deg,
-        rgba(  6,182,212,1) 144deg,
-        rgba( 16,185,129,1) 169deg,
-        rgba(234,179,  8,1) 195deg,
-        rgba(249,115, 22,1) 221deg,
-        rgba(239, 68, 68,1) 247deg,
+        rgba(139, 92,246,0.85)  92deg,
+        rgba( 59,130,246,0.85) 118deg,
+        rgba(  6,182,212,0.85) 144deg,
+        rgba( 16,185,129,0.85) 169deg,
+        rgba(234,179,  8,0.85) 195deg,
+        rgba(249,115, 22,0.85) 221deg,
+        rgba(239, 68, 68,0.85) 247deg,
         rgba(239, 68, 68,0) 274deg,
         rgba(239, 68, 68,0) 360deg
       );
@@ -127,9 +126,9 @@
         #ffd8cc 100%
       );
       box-shadow:
-        -2px 3px 10px rgba(165, 130, 240, 0.28),
-        4px -2px 9px rgba(255, 185, 160, 0.26),
-        0 0 14px rgba(190, 150, 255, 0.12);
+        -2px 3px 8px rgba(165, 130, 240, 0.19),
+        4px -2px 7px rgba(255, 185, 160, 0.18),
+        0 0 10px rgba(190, 150, 255, 0.08);
     }
     .input-inner {
       display: flex;
