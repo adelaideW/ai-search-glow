@@ -28,8 +28,9 @@
     /*
       Two-layer glow approach to fix overflow:hidden + filter clash:
 
-      .outer-glow   — filter: blur(8px), border-radius matches card (10px). “Spread” footprint
-        from inset:4px. No overflow here so blur can bleed outward.
+      .outer-glow   — filter: blur(8px). “Spread” ≈4px vs the old 8px inset frame by using
+        inset:4px (larger footprint) and matching border-radius:27px (~+4 vs 23px halo clip).
+        No overflow here so blur can bleed outward.
 
       .glow-clip   — overflow:hidden clips the raw conic; ::before is the rotating arc (~180°).
 
@@ -38,7 +39,7 @@
     .outer-glow {
       position: absolute;
       inset: 4px;
-      border-radius: 10px;
+      border-radius: 27px;
       pointer-events: none;
       z-index: 0;
       filter: blur(8px);
@@ -81,7 +82,7 @@
     .card-frame {
       position: relative;
       z-index: 1;
-      border-radius: 10px;
+      border-radius: 22px;
       padding: 0;
       overflow: visible;
       background: transparent;
@@ -91,7 +92,7 @@
     .card {
       position: relative;
       background: #fff;
-      border-radius: 10px;
+      border-radius: 22px;
       padding: 28px 32px 32px;
       z-index: 1;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
@@ -115,11 +116,27 @@
     }
 
     .input-frame {
-      border-radius: 10px;
-      border: 1.5px solid #e0e0e8;
+      padding: 1px;
+      border-radius: 15px;
+      overflow: hidden;
+      background: linear-gradient(
+        90deg,
+        #d4cff6 0%,
+        #e8dbf8 42%,
+        #ffeae0 74%,
+        #ffd8cc 100%
+      );
+      box-shadow:
+        -2px 3px 10px rgba(165, 130, 240, 0.28),
+        4px -2px 9px rgba(255, 185, 160, 0.26),
+        0 0 14px rgba(190, 150, 255, 0.12);
+    }
+    .input-inner {
+      display: flex;
+      background: #fff;
+      border-radius: 14px;
       overflow: hidden;
     }
-    .input-inner { display: flex; background: #fff; }
 
     input[type="text"] {
       flex: 1;
