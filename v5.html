@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Assistant Answers v5</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f0f0f2;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .scene {
+      position: relative;
+      max-width: 620px;
+      width: 100%;
+      padding: 20px;
+    }
+
+    /*
+      Two-layer glow approach to fix overflow:hidden + filter clash:
+
+      .outer-glow   — NO overflow, applies filter:blur(20px) so blur spreads freely
+        .glow-clip  — overflow:hidden, clips the conic gradient (prevents triangle artifact)
+          ::before  — the rotating rainbow conic gradient
+
+      blur is applied by the parent AFTER the child clips, so it bleeds outside.
+
+      vs v4: outer-glow opacity +20% (0.6 → 0.72) for a stronger halo.
+    */
+    .outer-glow {
+      position: absolute;
+      inset: 8px;          /* 12px beyond card edge */
+      border-radius: 23px;
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(20px);
+      opacity: 0.72;
+    }
+
+    .glow-clip {
+      position: absolute;
+      inset: 0;
+      border-radius: 23px;
+      overflow: hidden;    /* clips raw conic gradient — no triangle bleed */
+    }
+
+    .glow-clip::before {
+      content: "";
+      position: absolute;
+      inset: -150%;
+      background: conic-gradient(
+        from 0deg,
+        rgba(139, 92,246,0)   0deg,
+        rgba(139, 92,246,0) 290deg,
+        rgba(139, 92,246,1) 300deg,
+        rgba( 59,130,246,1) 315deg,
+        rgba(  6,182,212,1) 325deg,
+        rgba( 16,185,129,1) 333deg,
+        rgba(234,179,  8,1) 341deg,
+        rgba(249,115, 22,1) 349deg,
+        rgba(239, 68, 68,1) 356deg,
+        rgba(239, 68, 68,0) 360deg
+      );
+      animation: spin 4s linear infinite;
+    }
+
+    /*
+      No on-card rainbow ring: color only comes from the blurred .outer-glow layers,
+      so the white panel reads boundaryless instead of bordered between glow peaks.
+    */
+    .card-frame {
+      position: relative;
+      z-index: 1;
+      border-radius: 22px;
+      padding: 0;
+      overflow: visible;
+      background: transparent;
+    }
+
+    /* Card */
+    .card {
+      position: relative;
+      background: #fff;
+      border-radius: 22px;
+      padding: 28px 32px 32px;
+      z-index: 1;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+    }
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 6px;
+    }
+    .title-icon { font-size: 22px; color: #4f6ef7; }
+    .title-text { font-size: 22px; font-weight: 700; color: #4f6ef7; }
+    .title-text span { color: #c0392b; }
+
+    .subtitle {
+      font-size: 14.5px;
+      color: #555;
+      margin-bottom: 20px;
+      line-height: 1.45;
+    }
+
+    .input-frame {
+      border-radius: 12px;
+      border: 1.5px solid #e0e0e8;
+      overflow: hidden;
+    }
+    .input-inner { display: flex; background: #fff; }
+
+    input[type="text"] {
+      flex: 1;
+      border: none;
+      outline: none;
+      padding: 14px 18px;
+      font-size: 15px;
+      color: #333;
+      background: transparent;
+      font-family: inherit;
+    }
+    input[type="text"]::placeholder { color: #aaa; }
+
+    .ask-btn {
+      background: #4f6ef7;
+      color: #fff;
+      border: none;
+      padding: 14px 28px;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: inherit;
+    }
+    .ask-btn:hover { background: #3a58e0; }
+
+    .back-nav {
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      z-index: 100;
+    }
+
+    .back-nav a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 10px;
+      background: #1a2e6e;
+      color: #fff;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .back-nav a:hover { background: #c0392b; }
+  </style>
+</head>
+<body>
+  <nav class="back-nav" aria-label="Version menu">
+    <a href="index.html">← All versions</a>
+  </nav>
+  <div class="scene">
+    <!-- outer-glow: no overflow, applies blur freely -->
+    <div class="outer-glow">
+      <!-- glow-clip: clips gradient, prevents triangle artifact -->
+      <div class="glow-clip"></div>
+    </div>
+
+    <div class="card-frame">
+      <div class="card">
+        <div class="title-row">
+          <span class="title-icon">&#10022;</span>
+          <span class="title-text">AI Assistant <span>Answers</span></span>
+        </div>
+        <p class="subtitle">Get personalized, AI-powered answers built on trusted expertise.</p>
+
+        <div class="input-frame">
+          <div class="input-inner">
+            <input type="text" placeholder="Ask anything to get started..." />
+            <button class="ask-btn">ASK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
