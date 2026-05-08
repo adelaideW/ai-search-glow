@@ -28,29 +28,27 @@
     /*
       Two-layer glow approach to fix overflow:hidden + filter clash:
 
-      .outer-glow   — NO overflow, applies filter:blur(20px) so blur spreads freely
-        .glow-clip  — overflow:hidden, clips the conic gradient (prevents triangle artifact)
-          ::before  — the rotating rainbow conic gradient
+      .outer-glow   — filter: blur(8px), border-radius matches card (10px). “Spread” footprint
+        from inset:4px. No overflow here so blur can bleed outward.
 
-      blur is applied by the parent AFTER the child clips, so it bleeds outside.
+      .glow-clip   — overflow:hidden clips the raw conic; ::before is the rotating arc (~180°).
 
-      vs v4: outer-glow opacity +20% (0.6 → 0.72). Rainbow arc spans ~180° (~50%
-      of the orbit) so the blurred glow reads longer around the card / input strip.
+      vs v4: same halo opacity (0.6), boundaryless card, wide arc tuned for input strip sweep.
     */
     .outer-glow {
       position: absolute;
-      inset: 8px;          /* 12px beyond card edge */
-      border-radius: 23px;
+      inset: 4px;
+      border-radius: 10px;
       pointer-events: none;
       z-index: 0;
-      filter: blur(20px);
-      opacity: 0.72;
+      filter: blur(8px);
+      opacity: 0.6;
     }
 
     .glow-clip {
       position: absolute;
       inset: 0;
-      border-radius: 23px;
+      border-radius: inherit;
       overflow: hidden;    /* clips raw conic gradient — no triangle bleed */
     }
 
@@ -83,7 +81,7 @@
     .card-frame {
       position: relative;
       z-index: 1;
-      border-radius: 22px;
+      border-radius: 10px;
       padding: 0;
       overflow: visible;
       background: transparent;
@@ -93,7 +91,7 @@
     .card {
       position: relative;
       background: #fff;
-      border-radius: 22px;
+      border-radius: 10px;
       padding: 28px 32px 32px;
       z-index: 1;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
@@ -117,7 +115,7 @@
     }
 
     .input-frame {
-      border-radius: 12px;
+      border-radius: 10px;
       border: 1.5px solid #e0e0e8;
       overflow: hidden;
     }
