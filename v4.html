@@ -26,48 +26,21 @@
     }
 
     /*
-      Outer glow — clipped to 10px outside the card edge.
-      blur(10px) softens the boundary so it reads as a
-      gentle halo, not a hard cutoff.
+      Outer glow strategy:
+      - inset: 17px → element extends 3px beyond the card (scene padding 20 - 3 = 17)
+      - overflow: hidden → clips the raw conic gradient so no triangle artifact
+      - filter: blur(30px) on the container → applied AFTER clipping,
+        spreads softly outward beyond the 3px boundary
     */
-    /* Crisp halo clipped tight to the card */
     .outer-glow {
       position: absolute;
-      inset: 20px;
-      border-radius: 22px;
+      inset: 17px;
+      border-radius: 23px;
       overflow: hidden;
       pointer-events: none;
       z-index: 0;
-    }
-
-    /* Soft ambient — sibling, NOT clipped, blur spreads freely */
-    .ambient-glow {
-      position: absolute;
-      inset: 20px;
-      border-radius: 22px;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .ambient-glow::before {
-      content: "";
-      position: absolute;
-      inset: -150%;
-      background: conic-gradient(
-        from 0deg,
-        rgba(139,92,246,0)      0deg,
-        rgba(139,92,246,1)     55deg,
-        rgba(244,114,182,0.5)  95deg,
-        rgba(244,114,182,0)   145deg,
-        rgba(244,114,182,0)   205deg,
-        rgba(244,114,182,1)   255deg,
-        rgba(139,92,246,0.5)  295deg,
-        rgba(139,92,246,0)    340deg,
-        rgba(139,92,246,0)    360deg
-      );
-      animation: spin 5s linear infinite;
-      filter: blur(50px);
-      opacity: 0.75;
+      filter: blur(30px);
+      opacity: 0.9;
     }
 
     .outer-glow::before {
@@ -76,22 +49,21 @@
       inset: -150%;
       background: conic-gradient(
         from 0deg,
-        rgba(139,92,246,0)      0deg,
-        rgba(139,92,246,1)     55deg,
-        rgba(244,114,182,0.5)  95deg,
-        rgba(244,114,182,0)   145deg,
-        rgba(244,114,182,0)   205deg,
-        rgba(244,114,182,1)   255deg,
-        rgba(139,92,246,0.5)  295deg,
-        rgba(139,92,246,0)    340deg,
-        rgba(139,92,246,0)    360deg
+        rgba(139, 92,246,0)   0deg,
+        rgba(139, 92,246,0) 290deg,
+        rgba(139, 92,246,1) 300deg,
+        rgba( 59,130,246,1) 315deg,
+        rgba(  6,182,212,1) 325deg,
+        rgba( 16,185,129,1) 333deg,
+        rgba(234,179,  8,1) 341deg,
+        rgba(249,115, 22,1) 349deg,
+        rgba(239, 68, 68,1) 356deg,
+        rgba(239, 68, 68,0) 360deg
       );
-      animation: spin 5s linear infinite;
-      filter: blur(14px);
-      opacity: 0.9;
+      animation: spin 4s linear infinite;
     }
 
-    /* Card frame — overflow:hidden clips the gradient to a 2px border ring */
+    /* Card frame — overflow:hidden clips gradient to 2px border ring */
     .card-frame {
       position: relative;
       z-index: 1;
@@ -100,24 +72,25 @@
       overflow: hidden;
     }
 
-    /* Crisp purple→pink border ring */
+    /* Same rainbow arc, no blur — crisp travelling border */
     .card-frame::before {
       content: "";
       position: absolute;
       inset: -150%;
       background: conic-gradient(
         from 0deg,
-        rgba(139,92,246,0)      0deg,
-        rgba(139,92,246,1)     55deg,
-        rgba(244,114,182,0.5)  95deg,
-        rgba(244,114,182,0)   145deg,
-        rgba(244,114,182,0)   205deg,
-        rgba(244,114,182,1)   255deg,
-        rgba(139,92,246,0.5)  295deg,
-        rgba(139,92,246,0)    340deg,
-        rgba(139,92,246,0)    360deg
+        rgba(139, 92,246,0)   0deg,
+        rgba(139, 92,246,0) 290deg,
+        rgba(139, 92,246,1) 300deg,
+        rgba( 59,130,246,1) 315deg,
+        rgba(  6,182,212,1) 325deg,
+        rgba( 16,185,129,1) 333deg,
+        rgba(234,179,  8,1) 341deg,
+        rgba(249,115, 22,1) 349deg,
+        rgba(239, 68, 68,1) 356deg,
+        rgba(239, 68, 68,0) 360deg
       );
-      animation: spin 5s linear infinite;
+      animation: spin 4s linear infinite;
     }
 
     /* Card */
@@ -139,6 +112,7 @@
     .title-icon { font-size: 22px; color: #4f6ef7; }
     .title-text { font-size: 22px; font-weight: 700; color: #4f6ef7; }
     .title-text span { color: #c0392b; }
+
     .subtitle {
       font-size: 14.5px;
       color: #555;
@@ -152,10 +126,8 @@
       border: 1.5px solid #e0e0e8;
       overflow: hidden;
     }
-    .input-inner {
-      display: flex;
-      background: #fff;
-    }
+    .input-inner { display: flex; background: #fff; }
+
     input[type="text"] {
       flex: 1;
       border: none;
@@ -186,12 +158,11 @@
 <body>
   <div class="scene">
     <div class="outer-glow"></div>
-    <div class="ambient-glow"></div>
 
     <div class="card-frame">
       <div class="card">
         <div class="title-row">
-          <span class="title-icon">✦</span>
+          <span class="title-icon">&#10022;</span>
           <span class="title-text">AI Assistant <span>Answers</span></span>
         </div>
         <p class="subtitle">Get personalized, AI-powered answers built on trusted expertise.</p>
