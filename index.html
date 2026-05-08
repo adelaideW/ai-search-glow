@@ -26,24 +26,32 @@
     }
 
     /*
-      Outer glow strategy:
-      - inset: 17px → element extends 3px beyond the card (scene padding 20 - 3 = 17)
-      - overflow: hidden → clips the raw conic gradient so no triangle artifact
-      - filter: blur(30px) on the container → applied AFTER clipping,
-        spreads softly outward beyond the 3px boundary
+      Two-layer glow approach to fix overflow:hidden + filter clash:
+
+      .outer-glow   — NO overflow, applies filter:blur(30px) so blur spreads freely
+        .glow-clip  — overflow:hidden, clips the conic gradient (prevents triangle artifact)
+          ::before  — the rotating rainbow conic gradient
+
+      blur is applied by the parent AFTER the child clips, so it bleeds outside.
     */
     .outer-glow {
       position: absolute;
-      inset: 8px;
+      inset: 8px;          /* 12px beyond card edge */
       border-radius: 23px;
-      overflow: hidden;
       pointer-events: none;
       z-index: 0;
       filter: blur(30px);
       opacity: 0.9;
     }
 
-    .outer-glow::before {
+    .glow-clip {
+      position: absolute;
+      inset: 0;
+      border-radius: 23px;
+      overflow: hidden;    /* clips raw conic gradient — no triangle bleed */
+    }
+
+    .glow-clip::before {
       content: "";
       position: absolute;
       inset: -150%;
@@ -63,7 +71,7 @@
       animation: spin 4s linear infinite;
     }
 
-    /* Card frame — overflow:hidden clips gradient to 2px border ring */
+    /* Card frame — crisp 2px rainbow border ring */
     .card-frame {
       position: relative;
       z-index: 1;
@@ -72,7 +80,6 @@
       overflow: hidden;
     }
 
-    /* Same rainbow arc, no blur — crisp travelling border */
     .card-frame::before {
       content: "";
       position: absolute;
@@ -102,7 +109,6 @@
       z-index: 1;
     }
 
-    /* Title */
     .title-row {
       display: flex;
       align-items: center;
@@ -120,7 +126,6 @@
       line-height: 1.45;
     }
 
-    /* Input — static border, no animation */
     .input-frame {
       border-radius: 12px;
       border: 1.5px solid #e0e0e8;
@@ -157,7 +162,11 @@
 </head>
 <body>
   <div class="scene">
-    <div class="outer-glow"></div>
+    <!-- outer-glow: no overflow, applies blur freely -->
+    <div class="outer-glow">
+      <!-- glow-clip: clips gradient, prevents triangle artifact -->
+      <div class="glow-clip"></div>
+    </div>
 
     <div class="card-frame">
       <div class="card">
