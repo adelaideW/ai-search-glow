@@ -28,7 +28,7 @@
     /*
       Two-layer glow approach to fix overflow:hidden + filter clash:
 
-      .outer-glow   — NO overflow, applies filter:blur(30px) so blur spreads freely
+      .outer-glow   — NO overflow, applies filter:blur(20px) so blur spreads freely
         .glow-clip  — overflow:hidden, clips the conic gradient (prevents triangle artifact)
           ::before  — the rotating rainbow conic gradient
 
@@ -40,8 +40,8 @@
       border-radius: 23px;
       pointer-events: none;
       z-index: 0;
-      filter: blur(30px);
-      opacity: 0.9;
+      filter: blur(20px);
+      opacity: 0.6;
     }
 
     .glow-clip {
