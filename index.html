@@ -3,51 +3,188 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Search Glow — All Versions</title>
+  <title>AI Assistant Answers v2</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
       min-height: 100vh;
-      background: #f0f0f2;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 24px;
-      padding: 40px 20px;
+      background: #f0f0f2;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
-    h1 { font-size: 22px; color: #1a2e6e; font-weight: 700; }
-    p { color: #666; font-size: 14px; margin-top: 4px; }
-    .links {
+
+    /* ── Wrapper: gives space for outer glow to bleed ── */
+    .card-wrap {
+      position: relative;
+      max-width: 620px;
+      width: 100%;
+      padding: 28px;
+    }
+
+    /* ── Two orbiting blobs ──
+       Each blob is a soft radial gradient div that travels
+       around the card perimeter in a smooth elliptical path.
+       blob-1 = pink/rose, blob-2 = purple/blue
+       They start 180° apart so they're always on opposite sides.
+    ── */
+    .blob {
+      position: absolute;
+      width: 220px;
+      height: 100px;
+      border-radius: 50%;
+      filter: blur(22px);
+      opacity: 0.9;
+      pointer-events: none;
+      top: 50%;
+      left: 50%;
+    }
+
+    .blob-1 {
+      background: radial-gradient(ellipse, #f472b6 0%, #fb7185 50%, transparent 80%);
+      animation: orbit 5s linear infinite;
+    }
+
+    .blob-2 {
+      background: radial-gradient(ellipse, #818cf8 0%, #a78bfa 50%, transparent 80%);
+      animation: orbit 5s linear infinite;
+      animation-delay: -2.5s;
+    }
+
+    /*
+      Card: 564×179px. Half: Rx=282, Ry=89.
+      Blob center tracks the card perimeter — half the blob
+      hides behind the white card, half glows outside it.
+      blob: 220×100 → half = 110×50.
+      translate(Rx - 110, dy - 50)
+    */
+    @keyframes orbit {
+      0%   { transform: translate( 172px, -50px); }   /* right  */
+      25%  { transform: translate(-110px,-139px); }   /* top    */
+      50%  { transform: translate(-392px, -50px); }   /* left   */
+      75%  { transform: translate(-110px,  39px); }   /* bottom */
+      100% { transform: translate( 172px, -50px); }
+    }
+
+    /* ── Card ── */
+    .card {
+      position: relative;
+      z-index: 1;
+      background: #fff;
+      border-radius: 18px;
+      padding: 28px 32px 32px;
+      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+    }
+
+    /* ── Title ── */
+    .title-row {
       display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      justify-content: center;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 5px;
     }
-    a {
-      display: inline-block;
-      background: #1a2e6e;
-      color: white;
-      text-decoration: none;
-      padding: 12px 28px;
-      border-radius: 10px;
-      font-weight: 600;
+    .title-icon { font-size: 20px; color: #1a2e6e; }
+    .title-text { font-size: 21px; font-weight: 700; color: #1a2e6e; }
+    .title-text span { color: #c0392b; }
+    .badge {
+      background: #c0392b;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 7px;
+      border-radius: 5px;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+    .subtitle {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 20px;
+      line-height: 1.45;
+    }
+
+    /* ── Input: rotating gradient border (smooth via transform) ── */
+    .input-shell {
+      position: relative;
+      border-radius: 12px;
+      padding: 1.5px;
+      overflow: hidden;
+    }
+
+    /* Gradient layer — element stays still, content rotates inside */
+    .input-shell::before {
+      content: "";
+      position: absolute;
+      inset: -200%;
+      background: conic-gradient(
+        from 0deg,
+        #f9a8d4, #c4b5fd, #93c5fd, #f9a8d4
+      );
+      animation: spin 5s linear infinite;
+      z-index: 0;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .input-inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      border-radius: 11px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      border: none;
+      outline: none;
+      padding: 14px 18px;
       font-size: 15px;
-      transition: background 0.2s;
+      color: #333;
+      background: transparent;
+      font-family: inherit;
     }
-    a:hover { background: #c0392b; }
+    input[type="text"]::placeholder { color: #aaa; }
+
+    .ask-btn {
+      background: #c0392b;
+      color: #fff;
+      border: none;
+      padding: 14px 26px;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: inherit;
+    }
+    .ask-btn:hover { background: #a93226; }
   </style>
 </head>
 <body>
-  <div style="text-align:center">
-    <h1>AI Search Glow — Version Comparison</h1>
-    <p>Three approaches to the animated glow effect</p>
-  </div>
-  <div class="links">
-    <a href="v1.html">V1 — Card Glow</a>
-    <a href="v2.html">V2 — Orbiting Blobs</a>
-    <a href="v3.html">V3 — Border Orbit ✦</a>
+  <div class="card-wrap">
+    <!-- two orbiting color blobs -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="card">
+      <div class="title-row">
+        <span class="title-icon">✦</span>
+        <span class="title-text">AI Assistant <span>Answers</span></span>
+        <span class="badge">NEW!</span>
+      </div>
+      <p class="subtitle">Get personalized, AI-powered answers built on trusted expertise.</p>
+
+      <div class="input-shell">
+        <div class="input-inner">
+          <input type="text" placeholder="Ask anything to get started..." />
+          <button class="ask-btn">ASK</button>
+        </div>
+      </div>
+    </div>
   </div>
 </body>
 </html>
