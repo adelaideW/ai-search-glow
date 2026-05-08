@@ -106,16 +106,6 @@
     .title-icon { font-size: 22px; color: #1a2e6e; }
     .title-text { font-size: 22px; font-weight: 700; color: #1a2e6e; }
     .title-text span { color: #c0392b; }
-    .badge {
-      background: #c0392b;
-      color: #fff;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 5px;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-    }
     .subtitle {
       font-size: 14.5px;
       color: #555;
@@ -123,38 +113,16 @@
       line-height: 1.45;
     }
 
-    /* ─── Input frame: same border technique as card ─── */
+    /* ─── Input: static border, no animation ─── */
     .input-frame {
-      position: relative;
       border-radius: 12px;
-      padding: 1.5px;
+      border: 1.5px solid #e0e0e8;
       overflow: hidden;
     }
 
-    .input-frame::before {
-      content: "";
-      position: absolute;
-      inset: -400%; /* must cover corners when rotating */
-      background: conic-gradient(
-        from 0deg,
-        rgba(139,92,246,0)      0deg,
-        rgba(139,92,246,0.9)   55deg,
-        rgba(244,114,182,0.5)  95deg,
-        rgba(244,114,182,0)   145deg,
-        rgba(244,114,182,0)   205deg,
-        rgba(244,114,182,0.9) 255deg,
-        rgba(139,92,246,0.5)  295deg,
-        rgba(139,92,246,0)    340deg,
-        rgba(139,92,246,0)    360deg
-      );
-      animation: spin 5s linear infinite; /* same duration = stays in sync with card */
-    }
-
     .input-inner {
-      position: relative;
-      z-index: 1;
       display: flex;
-      border-radius: 11px;
+      border-radius: 10px;
       overflow: hidden;
       background: #fff;
     }
@@ -172,18 +140,18 @@
     input[type="text"]::placeholder { color: #aaa; }
 
     .ask-btn {
-      background: #c0392b;
+      background: #4f6ef7;
       color: #fff;
       border: none;
       padding: 14px 28px;
       font-size: 15px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
       cursor: pointer;
       transition: background 0.2s;
       font-family: inherit;
     }
-    .ask-btn:hover { background: #a93226; }
+    .ask-btn:hover { background: #3a58e0; }
   </style>
 </head>
 <body>
@@ -197,7 +165,6 @@
         <div class="title-row">
           <span class="title-icon">✦</span>
           <span class="title-text">AI Assistant <span>Answers</span></span>
-          <span class="badge">NEW!</span>
         </div>
         <p class="subtitle">Get personalized, AI-powered answers built on trusted expertise.</p>
 
