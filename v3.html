@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Assistant Answers v3</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f0f0f2;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── Scene: gives room for outer glow to bleed ─── */
+    .scene {
+      position: relative;
+      max-width: 620px;
+      width: 100%;
+      padding: 24px;
+    }
+
+    /* ─── Outer soft glow — mirrors the border gradient but blurred ─── */
+    .outer-glow {
+      position: absolute;
+      inset: 24px; /* aligns with card edge */
+      border-radius: 22px;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .outer-glow::before {
+      content: "";
+      position: absolute;
+      inset: -150%;
+      background: conic-gradient(
+        from 0deg,
+        rgba(139,92,246,0)      0deg,
+        rgba(139,92,246,0.9)   55deg,
+        rgba(244,114,182,0.5)  95deg,
+        rgba(244,114,182,0)   145deg,
+        rgba(244,114,182,0)   205deg,
+        rgba(244,114,182,0.9) 255deg,
+        rgba(139,92,246,0.5)  295deg,
+        rgba(139,92,246,0)    340deg,
+        rgba(139,92,246,0)    360deg
+      );
+      animation: spin 5s linear infinite;
+      filter: blur(16px);
+      opacity: 0.8;
+    }
+
+    /* ─── Card frame: clip overflow so gradient shows only as border ─── */
+    .card-frame {
+      position: relative;
+      z-index: 1;
+      border-radius: 20px;
+      padding: 2px;
+      overflow: hidden;
+      background: white; /* fallback */
+    }
+
+    /* Rotating gradient that peeks through as the 1.5px border */
+    .card-frame::before {
+      content: "";
+      position: absolute;
+      inset: -150%;
+      background: conic-gradient(
+        from 0deg,
+        rgba(139,92,246,0)      0deg,
+        rgba(139,92,246,0.9)   55deg,
+        rgba(244,114,182,0.5)  95deg,
+        rgba(244,114,182,0)   145deg,
+        rgba(244,114,182,0)   205deg,
+        rgba(244,114,182,0.9) 255deg,
+        rgba(139,92,246,0.5)  295deg,
+        rgba(139,92,246,0)    340deg,
+        rgba(139,92,246,0)    360deg
+      );
+      animation: spin 5s linear infinite;
+    }
+
+    /* ─── Card ─── */
+    .card {
+      position: relative;
+      background: #fff;
+      border-radius: 19px;
+      padding: 28px 32px 32px;
+      z-index: 1;
+    }
+
+    /* ─── Title ─── */
+    .title-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 6px;
+    }
+    .title-icon { font-size: 22px; color: #1a2e6e; }
+    .title-text { font-size: 22px; font-weight: 700; color: #1a2e6e; }
+    .title-text span { color: #c0392b; }
+    .badge {
+      background: #c0392b;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 5px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .subtitle {
+      font-size: 14.5px;
+      color: #555;
+      margin-bottom: 20px;
+      line-height: 1.45;
+    }
+
+    /* ─── Input frame: same border technique as card ─── */
+    .input-frame {
+      position: relative;
+      border-radius: 12px;
+      padding: 1.5px;
+      overflow: hidden;
+    }
+
+    .input-frame::before {
+      content: "";
+      position: absolute;
+      inset: -400%; /* must cover corners when rotating */
+      background: conic-gradient(
+        from 0deg,
+        rgba(139,92,246,0)      0deg,
+        rgba(139,92,246,0.9)   55deg,
+        rgba(244,114,182,0.5)  95deg,
+        rgba(244,114,182,0)   145deg,
+        rgba(244,114,182,0)   205deg,
+        rgba(244,114,182,0.9) 255deg,
+        rgba(139,92,246,0.5)  295deg,
+        rgba(139,92,246,0)    340deg,
+        rgba(139,92,246,0)    360deg
+      );
+      animation: spin 5s linear infinite; /* same duration = stays in sync with card */
+    }
+
+    .input-inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      border-radius: 11px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      border: none;
+      outline: none;
+      padding: 14px 18px;
+      font-size: 15px;
+      color: #333;
+      background: transparent;
+      font-family: inherit;
+    }
+    input[type="text"]::placeholder { color: #aaa; }
+
+    .ask-btn {
+      background: #c0392b;
+      color: #fff;
+      border: none;
+      padding: 14px 28px;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: inherit;
+    }
+    .ask-btn:hover { background: #a93226; }
+  </style>
+</head>
+<body>
+  <div class="scene">
+    <!-- outer soft glow (not clipped, bleeds outside card) -->
+    <div class="outer-glow"></div>
+
+    <!-- card with rotating gradient border -->
+    <div class="card-frame">
+      <div class="card">
+        <div class="title-row">
+          <span class="title-icon">✦</span>
+          <span class="title-text">AI Assistant <span>Answers</span></span>
+          <span class="badge">NEW!</span>
+        </div>
+        <p class="subtitle">Get personalized, AI-powered answers built on trusted expertise.</p>
+
+        <!-- input with rotating gradient border (same phase) -->
+        <div class="input-frame">
+          <div class="input-inner">
+            <input type="text" placeholder="Ask anything to get started..." />
+            <button class="ask-btn">ASK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
