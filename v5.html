@@ -34,7 +34,8 @@
 
       blur is applied by the parent AFTER the child clips, so it bleeds outside.
 
-      vs v4: outer-glow opacity +20% (0.6 → 0.72) for a stronger halo.
+      vs v4: outer-glow opacity +20% (0.6 → 0.72). Rainbow arc spans ~180° (~50%
+      of the orbit) so the blurred glow reads longer around the card / input strip.
     */
     .outer-glow {
       position: absolute;
@@ -57,17 +58,19 @@
       content: "";
       position: absolute;
       inset: -150%;
+      /* ~180° luminous arc (~50% lap); soft fades 85–270° into transparent */
       background: conic-gradient(
         from 0deg,
         rgba(139, 92,246,0)   0deg,
-        rgba(139, 92,246,0) 290deg,
-        rgba(139, 92,246,1) 300deg,
-        rgba( 59,130,246,1) 315deg,
-        rgba(  6,182,212,1) 325deg,
-        rgba( 16,185,129,1) 333deg,
-        rgba(234,179,  8,1) 341deg,
-        rgba(249,115, 22,1) 349deg,
-        rgba(239, 68, 68,1) 356deg,
+        rgba(139, 92,246,0)  82deg,
+        rgba(139, 92,246,1)  92deg,
+        rgba( 59,130,246,1) 118deg,
+        rgba(  6,182,212,1) 144deg,
+        rgba( 16,185,129,1) 169deg,
+        rgba(234,179,  8,1) 195deg,
+        rgba(249,115, 22,1) 221deg,
+        rgba(239, 68, 68,1) 247deg,
+        rgba(239, 68, 68,0) 274deg,
         rgba(239, 68, 68,0) 360deg
       );
       animation: spin 4s linear infinite;
